@@ -6,7 +6,6 @@ def get_wishlist():
     """取得所有願望清單項目"""
     conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
-    # 確保 wishlist 資料表存在
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS wishlist (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
