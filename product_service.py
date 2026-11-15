@@ -3,7 +3,7 @@ import sqlite3
 DB_NAME = "blushbook.db"
 
 def get_all_products(status=None):
-    """取得所有美妝庫存產品（支援狀態篩選，若無則回傳全部）"""
+    """取得所有美妝庫存產品"""
     conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
     cursor.execute('''
@@ -47,3 +47,7 @@ def delete_product(product_id):
     cursor.execute("DELETE FROM products WHERE id = ?", (product_id,))
     conn.commit()
     conn.close()
+
+def update_product_status(product_id, status):
+    """預留狀態更新函數"""
+    pass
