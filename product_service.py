@@ -40,6 +40,14 @@ def add_product(name, category, expiry_date, notes=""):
     conn.commit()
     conn.close()
 
+def delete_product(product_id):
+    """根據 ID 刪除產品"""
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM products WHERE id = ?", (product_id,))
+    conn.commit()
+    conn.close()
+
 def update_product_status(product_id, status):
-    """預留的狀態更新函數（防範導入錯誤）"""
+    """預留狀態更新函數"""
     pass
