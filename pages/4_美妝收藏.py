@@ -1,8 +1,5 @@
 import streamlit as st
-from database import init_db
 
-init_db()
-
-st.title("🌟 美妝收藏與分類")
-st.write("在這裡管理妳的質感美妝收藏。")
-st.info("功能建置中，敬請期待！")
+st.title("✨ 美妝收藏與筆記")
+st.write("在這裡可以記錄你的美妝心得、常用色號筆記或購物清單備忘。")
+st.info("此頁面可依個人需求擴充更多小工具！")
