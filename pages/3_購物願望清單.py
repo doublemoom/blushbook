@@ -1,60 +1,43 @@
 import streamlit as st
 from database import init_db
-
-# 嘗試安全載入 wishlist_service，如果沒有這個檔案則提供基本防護
-try:
-    from wishlist_service import get_wishlist, add_wishlist_item
-except ImportError:
-    def get_wishlist():
-        return []
-    def add_wishlist_item(name, price, store):
-        pass
+from wishlist_service import add_to_wishlist, get_wishlist, delete_from_wishlist
 
 init_db()
-
 st.title("🛍️ 購物願望清單")
-st.write("記錄妳想要入手的美妝保養品，隨時掌握清單與價格！")
 
-# 簡易的新增願望表單
-with st.form("wishlist_form"):
-    st.subheader("➕ 新增心儀美妝")
-    item_name = st.text_input("產品名稱")
-    item_price = st.number_input("預估價格 (NT$)", min_value=0, value=500)
-    item_store = st.text_input("購買通路 / 連結")
-    
-    submitted = st.form_submit_button("加入願望清單")
-    if submitted and item_name:
-        try:
-            add_wishlist_item(item_name, item_price, item_store)
-            st.success(f"成功將 「{item_name}」 加入願望清單！")
-            st.rerun()
-        except Exception as e:
-            st.error(f"新增失敗: {e}")
+with st.expander("➕ 新增願望清單項目"):
+    with st.form("wish_form"):
+        name = st.text_input("產品名稱 *")
+        brand = st.text_input("品牌")
+        category = st.selectbox("類別", ["底妝", "眼妝", "唇彩", "腮紅/修容", "保養品", "其他"])
+        price = st.number_input("預估價格 (NT$)", min_value=0, value=0)
+        product_url = st.text_input("商品網址")
+        notes = st.text_area("備忘/心得")
+        
+        submitted = st.form_submit_button("加入願望清單")
+        if submitted:
+            if name:
+                add_to_wishlist(name=name, brand=brand, category=category, price=price, product_url=product_url, notes=notes)
+                st.success(f"成功加入願望清單：{name}！")
+                st.rerun()
+            else:
+                st.error("請至少填寫產品名稱！")
 
 st.divider()
-st.subheader("📋 目前的願望清單")
-
-wishlist_items = get_wishlist()
-
-if not wishlist_items:
-    st.info("目前願望清單是空的，趕快在上方的表單新增妳想買的美妝品吧！")
+items = get_wishlist()
+if not items:
+    st.info("願望清單目前是空的。")
 else:
-    for item in wishlist_items:
-        try:
-            name = item[1] if len(item) > 1 else str(item)
-            price = item[2] if len(item) > 2 else "未知"
-            store = item[3] if len(item) > 3 else "未填寫"
-        except Exception:
-            name = str(item)
-            price = "未知"
-            store = "未填寫"
-            
-        with st.container():
-            col1, col2, col3 = st.columns([3, 2, 2])
-            with col1:
-                st.markdown(f"**{name}**")
-            with col2:
-                st.text(f"價格: NT$ {price}")
-            with col3:
-                st.text(f"通路: {store}")
-            st.divider()
+    for item in items:
+        cols = st.columns([3, 2, 1])
+        with cols[0]:
+            st.markdown(f"**{item['name']}** ({item['brand'] or '無品牌'})")
+            if item['product_url']:
+                st.markdown(f"[商品連結]({item['product_url']})")
+        with cols[1]:
+            st.text(f"預估價格: NT${item['price'] or 0}")
+        with cols[2]:
+            if st.button("刪除", key=f"del_wish_{item['wishlist_id']}"):
+                delete_from_wishlist(item['wishlist_id'])
+                st.rerun()
+        st.divider()

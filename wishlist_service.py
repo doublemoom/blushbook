@@ -1,39 +1,21 @@
-import sqlite3
+from database import get_connection
+from contextlib import closing
 
-DB_NAME = "blushbook.db"
+def add_to_wishlist(name, brand=None, category=None, shade=None, price=None, product_url=None, notes=None):
+    with closing(get_connection()) as conn:
+        with conn:
+            cursor = conn.execute("""
+                INSERT INTO wishlist (name, brand, category, shade, price, product_url, notes)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            """, (name, brand, category, shade, price, product_url, notes))
+            return cursor.lastrowid
 
 def get_wishlist():
-    """取得所有願望清單項目"""
-    conn = sqlite3.connect(DB_NAME)
-    cursor = conn.cursor()
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS wishlist (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            price REAL,
-            store TEXT
-        )
-    ''')
-    cursor.execute("SELECT id, name, price, store FROM wishlist")
-    rows = cursor.fetchall()
-    conn.close()
-    return rows
+    with closing(get_connection()) as conn:
+        cursor = conn.execute("SELECT * FROM wishlist ORDER BY created_at DESC")
+        return [dict(row) for row in cursor.fetchall()]
 
-def add_wishlist_item(name, price, store):
-    """新增一筆願望清單項目"""
-    conn = sqlite3.connect(DB_NAME)
-    cursor = conn.cursor()
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS wishlist (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            price REAL,
-            store TEXT
-        )
-    ''')
-    cursor.execute(
-        "INSERT INTO wishlist (name, price, store) VALUES (?, ?, ?)",
-        (name, price, store)
-    )
-    conn.commit()
-    conn.close()
+def delete_from_wishlist(wishlist_id):
+    with closing(get_connection()) as conn:
+        with conn:
+            conn.execute("DELETE FROM wishlist WHERE wishlist_id = ?", (wishlist_id,))
