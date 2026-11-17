@@ -14,7 +14,7 @@ else:
         exp = p.get('expiry_date')
         reminder = p.get('reminder_days', 30)
         res = calculate_expiry_status(exp, reminder)
-        
+
         status_icon = "🟢"
         status_text = "安全"
         if res["status"] == "expired":
