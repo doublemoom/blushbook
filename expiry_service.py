@@ -6,13 +6,13 @@ def calculate_expiry_status(expiry_date_str):
     """
     if not expiry_date_str:
         return {"status": "未知", "days_left": None, "color": "gray"}
-    
+
     try:
         # 解析日期字串 (支援 YYYY-MM-DD)
         expiry_date = datetime.strptime(str(expiry_date_str).split()[0], "%Y-%m-%d").date()
         today = date.today()
         delta = (expiry_date - today).days
-        
+
         if delta < 0:
             return {"status": "🔴 已過期", "days_left": delta, "color": "red"}
         elif delta <= 30:
