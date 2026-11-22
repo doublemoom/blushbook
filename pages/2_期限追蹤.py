@@ -35,6 +35,3 @@ else:
                     st.write(f"**距離到期還有：** {res['days_left']} 天")
                 else:
                     st.write(f"**已過期：** {-res['days_left']} 天")
-
-
-i love you
