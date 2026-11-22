@@ -1,13 +1,34 @@
 from database import get_connection
 from contextlib import closing
 
-def add_product(name, category, brand=None, shade=None, purchase_date=None, opened_date=None, expiry_date=None, pao_months=None, price=None, notes=None):
+
+def add_product(
+    name,
+    category,
+    brand=None,
+    shade=None,
+    purchase_date=None,
+    opened_date=None,
+    expiry_date=None,
+    pao_months=None,
+    reminder_days=30,
+    price=None,
+    notes=None
+):
     with closing(get_connection()) as conn:
         with conn:
             cursor = conn.execute("""
-                INSERT INTO products (name, category, brand, shade, purchase_date, opened_date, expiry_date, pao_months, price, notes)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """, (name, category, brand, shade, purchase_date, opened_date, expiry_date, pao_months, price, notes))
+                INSERT INTO products (
+                    name, category, brand, shade,
+                    purchase_date, opened_date, expiry_date,
+                    pao_months, reminder_days, price, notes
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, (
+                name, category, brand, shade,
+                purchase_date, opened_date, expiry_date,
+                pao_months, reminder_days, price, notes
+            ))
             return cursor.lastrowid
 
 def get_all_products(status="using"):
@@ -24,3 +45,41 @@ def delete_product(product_id):
     with closing(get_connection()) as conn:
         with conn:
             conn.execute("DELETE FROM products WHERE product_id = ?", (product_id,))
+
+def update_product(
+    product_id,
+    name,
+    brand,
+    category,
+    shade,
+    purchase_date,
+    opened_date,
+    expiry_date,
+    pao_months,
+    reminder_days,
+    price,
+    notes
+):
+    with closing(get_connection()) as conn:
+        with conn:
+            conn.execute("""
+                UPDATE products
+                SET name = ?,
+                    brand = ?,
+                    category = ?,
+                    shade = ?,
+                    purchase_date = ?,
+                    opened_date = ?,
+                    expiry_date = ?,
+                    pao_months = ?,
+                    reminder_days = ?,
+                    price = ?,
+                    notes = ?,
+                    updated_at = CURRENT_TIMESTAMP
+                WHERE product_id = ?
+            """, (
+                name, brand, category, shade,
+                purchase_date, opened_date, expiry_date,
+                pao_months, reminder_days, price, notes,
+                product_id
+            ))

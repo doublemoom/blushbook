@@ -14,7 +14,7 @@ col1, col2 = st.columns(2)
 try:
     using_products = get_all_products(status="using")
     wishlist_items = get_wishlist()
-    
+
     with col1:
         st.metric("目前使用中的產品數量", len(using_products))
     with col2:

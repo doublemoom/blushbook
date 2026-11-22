@@ -5,25 +5,36 @@ from product_service import add_product, get_all_products, update_product_status
 init_db()
 st.title("📦 我的美妝庫存")
 
-with st.expander("➕ 新增一筆美妝產品"):
-    with st.form("add_product_form"):
-        name = st.text_input("產品名稱 *")
-        brand = st.text_input("品牌")
-        category = st.selectbox("類別", ["底妝", "眼妝", "唇彩", "腮紅/修容", "保養品", "其他"])
-        shade = st.text_input("色號/規格")
-        price = st.number_input("價格 (NT$)", min_value=0, value=0)
-        expiry_date = st.date_input("有效期限", value=None)
-        notes = st.text_area("備忘筆記")
-        
-        submitted = st.form_submit_button("確認新增")
-        if submitted:
-            if name:
-                exp_str = expiry_date.strftime("%Y-%m-%d") if expiry_date else None
-                add_product(name=name, category=category, brand=brand, shade=shade, expiry_date=exp_str, price=price, notes=notes)
-                st.success(f"成功新增產品：{name}！")
-                st.rerun()
-            else:
-                st.error("請至少填寫產品名稱！")
+
+def add_product(
+    name,
+    category,
+    brand=None,
+    shade=None,
+    purchase_date=None,
+    opened_date=None,
+    expiry_date=None,
+    pao_months=None,
+    reminder_days=30,
+    price=None,
+    notes=None
+):
+    with closing(get_connection()) as conn:
+        with conn:
+            cursor = conn.execute("""
+                INSERT INTO products (
+                    name, category, brand, shade,
+                    purchase_date, opened_date, expiry_date,
+                    pao_months, reminder_days, price, notes
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, (
+                name, category, brand, shade,
+                purchase_date, opened_date, expiry_date,
+                pao_months, reminder_days, price, notes
+            ))
+            return cursor.lastrowid
+
 
 st.divider()
 st.subheader("📋 使用中的產品清單")
@@ -50,3 +61,25 @@ else:
                 delete_product(p['product_id'])
                 st.rerun()
         st.divider()
+
+purchase_date = st.date_input(
+    "購買日期",
+    value=None
+)
+
+opened_date = st.date_input(
+    "開封日期",
+    value=None
+)
+
+pao_months = st.number_input(
+    "開封後使用期限（個月）",
+    min_value=0,
+    value=0
+)
+
+reminder_days = st.number_input(
+    "到期前幾天提醒",
+    min_value=0,
+    value=30
+)

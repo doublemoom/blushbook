@@ -21,7 +21,7 @@ def init_db():
                 brand TEXT,
                 category TEXT NOT NULL,
                 shade TEXT,
-                purchase_date TEXT, 
+                purchase_date TEXT,
                 opened_date TEXT,
                 expiry_date TEXT,
                 pao_months INTEGER,
@@ -48,6 +48,12 @@ def init_db():
                 created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
             )
         """)
+        conn.execute("""
+    CREATE TABLE IF NOT EXISTS settings (
+        setting_key TEXT PRIMARY KEY,
+        setting_value TEXT
+    )
+""")
 
 if __name__ == "__main__":
     init_db()
