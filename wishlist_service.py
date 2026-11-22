@@ -20,4 +20,3 @@ def delete_from_wishlist(wishlist_id):
         with conn:
             conn.execute("DELETE FROM wishlist WHERE wishlist_id = ?", (wishlist_id,))
 
-i love you
