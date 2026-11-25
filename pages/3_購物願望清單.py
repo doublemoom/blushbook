@@ -7,7 +7,7 @@ from wishlist_service import (
     add_to_wishlist,
     compare_with_products,
     delete_from_wishlist,
-    get_wishlist_items,
+    get_wishlist,
 )
 
 st.set_page_config(page_title="購物願望清單", page_icon="🛍️", layout="wide")
@@ -44,7 +44,7 @@ with st.form("wish_form", clear_on_submit=True):
 
 st.divider()
 
-wishlist_items = get_wishlist_items()
+wishlist_items = get_wishlist()
 all_products = get_all_products()
 
 if not wishlist_items:
