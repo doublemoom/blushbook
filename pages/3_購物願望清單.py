@@ -13,34 +13,54 @@ from wishlist_service import (
 st.set_page_config(page_title="購物願望清單", page_icon="🛍️", layout="wide")
 init_db()
 
+
+def _submit_wishlist():
+    name_val = (st.session_state.get("w_name") or "").strip()
+    if not name_val:
+        st.session_state["wish_feedback"] = ("error", "請填寫產品名稱。")
+        return
+
+    add_to_wishlist(
+        name=name_val,
+        brand=(st.session_state.get("w_brand") or "").strip() or None,
+        category=st.session_state.get("w_cat") or "其他",
+        shade=(st.session_state.get("w_shade") or "").strip() or None,
+        price=int(st.session_state.get("w_price") or 0),
+        product_url=(st.session_state.get("w_url") or "").strip() or None,
+        notes=(st.session_state.get("w_notes") or "").strip() or None,
+    )
+    st.session_state["w_name"] = ""
+    st.session_state["w_brand"] = ""
+    st.session_state["w_cat"] = "底妝"
+    st.session_state["w_shade"] = ""
+    st.session_state["w_price"] = 0
+    st.session_state["w_url"] = ""
+    st.session_state["w_notes"] = ""
+    st.session_state["wish_feedback"] = ("success", "已加入願望清單！")
+
+
 # --- 3. 購物願望清單 ---
 st.subheader("🛍️ 購物願望清單與相似產品比對")
 
-w_name = st.text_input("產品名稱 *", key="w_name")
-w_brand = st.text_input("品牌", key="w_brand")
-w_category = st.selectbox(
+st.text_input("產品名稱 *", key="w_name")
+st.text_input("品牌", key="w_brand")
+st.selectbox(
     "類別", ["底妝", "眼妝", "唇彩", "腮紅", "保養", "其他"], key="w_cat"
 )
-w_shade = st.text_input("色號或色系", key="w_shade")
-w_price = st.number_input("參考價格 (NT$)", min_value=0, step=10, value=0, key="w_price")
-w_url = st.text_input("商品網址", key="w_url")
-w_notes = st.text_area("購買原因或備註", key="w_notes")
+st.text_input("色號或色系", key="w_shade")
+st.number_input("參考價格 (NT$)", min_value=0, step=10, value=0, key="w_price")
+st.text_input("商品網址", key="w_url")
+st.text_area("購買原因或備註", key="w_notes")
 
-if st.button("加入願望清單", type="primary"):
-    if not w_name.strip():
-        st.error("請填寫產品名稱。")
+st.button("加入願望清單", type="primary", on_click=_submit_wishlist)
+
+feedback = st.session_state.pop("wish_feedback", None)
+if feedback:
+    kind, msg = feedback
+    if kind == "error":
+        st.error(msg)
     else:
-        add_to_wishlist(
-            name=w_name.strip(),
-            brand=w_brand.strip() or None,
-            category=w_category,
-            shade=w_shade.strip() or None,
-            price=int(w_price),
-            product_url=w_url.strip() or None,
-            notes=w_notes.strip() or None,
-        )
-        st.success("已加入願望清單！")
-        st.rerun()
+        st.success(msg)
 
 st.divider()
 
