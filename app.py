@@ -39,4 +39,3 @@ m3.metric("願望清單", len(wishlist_items))
 
 st.divider()
 st.info("請從左側側邊欄切換「我的美妝庫存」、「期限追蹤」、「購物願望清單」或「美妝收藏」。")
-)
