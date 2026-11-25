@@ -15,32 +15,32 @@ init_db()
 
 # --- 3. 購物願望清單 ---
 st.subheader("🛍️ 購物願望清單與相似產品比對")
-with st.form("wish_form", clear_on_submit=True):
-    w_name = st.text_input("產品名稱 *")
-    w_brand = st.text_input("品牌")
-    w_category = st.selectbox(
-        "類別", ["底妝", "眼妝", "唇彩", "腮紅", "保養", "其他"], key="w_cat"
-    )
-    w_shade = st.text_input("色號或色系")
-    w_price = st.number_input("參考價格 (NT$)", min_value=0, step=10, value=0)
-    w_url = st.text_input("商品網址")
-    w_notes = st.text_area("購買原因或備註")
 
-    if st.form_submit_button("加入願望清單"):
-        if not w_name.strip():
-            st.error("請填寫產品名稱。")
-        else:
-            add_to_wishlist(
-                name=w_name.strip(),
-                brand=w_brand.strip() or None,
-                category=w_category,
-                shade=w_shade.strip() or None,
-                price=int(w_price),
-                product_url=w_url.strip() or None,
-                notes=w_notes.strip() or None,
-            )
-            st.success("已加入願望清單！")
-            st.rerun()
+w_name = st.text_input("產品名稱 *", key="w_name")
+w_brand = st.text_input("品牌", key="w_brand")
+w_category = st.selectbox(
+    "類別", ["底妝", "眼妝", "唇彩", "腮紅", "保養", "其他"], key="w_cat"
+)
+w_shade = st.text_input("色號或色系", key="w_shade")
+w_price = st.number_input("參考價格 (NT$)", min_value=0, step=10, value=0, key="w_price")
+w_url = st.text_input("商品網址", key="w_url")
+w_notes = st.text_area("購買原因或備註", key="w_notes")
+
+if st.button("加入願望清單", type="primary"):
+    if not w_name.strip():
+        st.error("請填寫產品名稱。")
+    else:
+        add_to_wishlist(
+            name=w_name.strip(),
+            brand=w_brand.strip() or None,
+            category=w_category,
+            shade=w_shade.strip() or None,
+            price=int(w_price),
+            product_url=w_url.strip() or None,
+            notes=w_notes.strip() or None,
+        )
+        st.success("已加入願望清單！")
+        st.rerun()
 
 st.divider()
 
@@ -48,7 +48,7 @@ wishlist_items = get_wishlist()
 all_products = get_all_products()
 
 keyword = st.text_input(
-    "搜尋願望清單（產品名稱、品牌或色號，按 Enter 套用）",
+    "搜尋願望清單（產品名稱、品牌或色號）",
     key="search_wishlist",
 ).strip().lower()
 
@@ -94,4 +94,3 @@ else:
                 delete_from_wishlist(item["wishlist_id"])
                 st.rerun()
         st.divider()
-
