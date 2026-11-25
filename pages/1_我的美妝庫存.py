@@ -220,4 +220,29 @@ else:
                     "提前幾天提醒",
                     min_value=1,
                     max_value=365,
-                    value=
+                    value=int(p.get("reminder_days") or 30),
+                    key=f"erem_{pid}",
+                )
+                e_notes = st.text_area("備註", value=p.get("notes") or "", key=f"enotes_{pid}")
+
+                if st.form_submit_button("儲存修改"):
+                    if not e_name.strip():
+                        st.error("產品名稱不能為空。")
+                    else:
+                        update_product(
+                            product_id=pid,
+                            name=e_name.strip(),
+                            brand=e_brand.strip() or None,
+                            category=e_cat,
+                            shade=e_shade.strip() or None,
+                            purchase_date=_to_str_or_none(e_p_date),
+                            opened_date=_to_str_or_none(e_o_date),
+                            expiry_date=_to_str_or_none(e_e_date),
+                            pao_months=int(e_pao) if e_pao > 0 else None,
+                            reminder_days=int(e_rem),
+                            price=int(e_price),
+                            notes=e_notes.strip() or None,
+                        )
+                        st.success("已更新產品資料！")
+                        st.rerun()
+        st.divider()
