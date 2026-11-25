@@ -47,10 +47,24 @@ st.divider()
 wishlist_items = get_wishlist()
 all_products = get_all_products()
 
-if not wishlist_items:
-    st.info("願望清單目前是空的。")
+keyword = st.text_input(
+    "搜尋願望清單（產品名稱、品牌或色號，按 Enter 套用）",
+    key="search_wishlist",
+).strip().lower()
+
+filtered_items = [
+    item
+    for item in wishlist_items
+    if not keyword
+    or keyword in (item.get("name") or "").lower()
+    or keyword in (item.get("brand") or "").lower()
+    or keyword in (item.get("shade") or "").lower()
+]
+
+if not filtered_items:
+    st.info("目前沒有符合條件的願望清單項目。")
 else:
-    for item in wishlist_items:
+    for item in filtered_items:
         cmp_result = compare_with_products(item, all_products)
         cols = st.columns([3, 2, 1])
         with cols[0]:
