@@ -38,4 +38,13 @@ m2.metric("需留意期限（使用中）", expiring_or_expired_count)
 m3.metric("願望清單", len(wishlist_items))
 
 st.divider()
-st.info("請從左側側邊欄切換「我的美妝庫存」、「期限追蹤」、「購物願望清單」或「美妝收藏」。")
+
+nav_cols = st.columns(4)
+with nav_cols[0]:
+    st.page_link("pages/1_我的美妝庫存.py", label="我的美妝庫存", icon="📦")
+with nav_cols[1]:
+    st.page_link("pages/2_期限追蹤.py", label="期限追蹤", icon="⏳")
+with nav_cols[2]:
+    st.page_link("pages/3_購物願望清單.py", label="購物願望清單", icon="🛍️")
+with nav_cols[3]:
+    st.page_link("pages/4_美妝收藏.py", label="美妝收藏", icon="✨")
