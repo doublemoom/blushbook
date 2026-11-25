@@ -1,4 +1,4 @@
-i# --- 4. 產品狀態紀錄 ---
+# --- 4. 產品狀態紀錄 ---
 import streamlit as st
 
 from database import init_db
