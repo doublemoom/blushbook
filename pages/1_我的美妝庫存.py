@@ -8,7 +8,6 @@ from product_service import (
     add_product,
     delete_product,
     get_all_products,
-    update_product,
     update_product_status,
 )
 
@@ -176,3 +175,15 @@ else:
                 st.caption(
                     f"依據日期：{exp_info['check_date']}（剩餘 {exp_info['days_remaining']} 天）"
                 )
+        with cols[2]:
+            b1, b2, b3 = st.columns(3)
+            if b1.button("用完", key=f"fin_{pid}"):
+                update_product_status(pid, "finished")
+                st.rerun()
+            if b2.button("丟棄", key=f"dis_{pid}"):
+                update_product_status(pid, "discarded")
+                st.rerun()
+            if b3.button("刪除", key=f"del_{pid}"):
+                delete_product(pid)
+                st.rerun()
+        st.divider()
